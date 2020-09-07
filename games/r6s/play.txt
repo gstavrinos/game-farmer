@@ -1,0 +1,44 @@
+# Rainbow Six Siege Config file
+windows_mode,1
+find_and_left_click,games/r6s/burger.png,0.6
+find_and_press,games/r6s/burger.png,0.6,enter
+find_and_press,games/r6s/training_grounds.png,0.6,enter
+find_and_press,games/r6s/lone_wolf.png,0.6,enter
+---
+find_and_press,games/r6s/no_vote.png,0.6,enter
+wait,1
+!check_for,games/r6s/doc.png,0.9
++find_and_press,games/r6s/recruit.png,0.6,enter
+-find_and_press,games/r6s/doc.png,0.9,enter
+find_and_press,games/r6s/confirm_selection.png,0.6,enter
+wait,5
+find_and_press,games/r6s/infinite_timer.png,0.6,enter
+# #############################################################
+# The commented out commands work for any map                 #
+# Basically, you wait 60 seconds to be eligible for points    #
+# and then suicide using a grenade                            #
+#wait,60
+#mouse_move,1280,1080
+#middle_mouse_down,1280,1080
+#middle_mouse_up,1280,1080
+#middle_mouse_down,1280,1080
+# #############################################################
+keyboard_press,ctrl
+-wait,4
+-middle_click,1280,540
+-wait,5
+-middle_click,1280,540
+-wait,5
+-middle_click,1280,540
+-wait,5
+-middle_click,1280,540
+-wait,5
+-middle_click,1280,540
+-wait,5
+-middle_click,1280,540
+find_and_press,games/r6s/bonus.png,0.6,tab
+wait,2
+# Press Esc in case of a daily completion
+keyboard_press,esc
+find_and_press,games/r6s/vote_for_retry.png,0.6,enter
+# Watch for empty lines at the end of the file
