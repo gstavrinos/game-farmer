@@ -26,9 +26,12 @@
 import os
 import sys
 import random
+import platform
 from time import sleep
 import pyautogui as pag
-import pydirectinput as pdi
+
+if platform.system() == "Windows":
+    import pydirectinput as pdi
 
 result = None
 controller = pag
@@ -66,31 +69,54 @@ def mouseTo(x,y):
 
 def select(s, confidence, once=False):
     while(True):
-        target = pag.locateOnScreen(s, confidence=confidence)
+        target = None
+        try:
+            target = pag.locateOnScreen(s, confidence=confidence)
+        except:
+            pass
         if target:
             return pag.center(target)
         if once:
             return target
 
 def selectThenClick(s, confidence, button):
-    target = select(s, confidence)
-    click(target[0],target[1],button=button)
+    try:
+        target = select(s, confidence)
+        print(target)
+        click(target[0],target[1],button=button)
+    except Exception as e:
+        print(e)
+        print("Could not find:"+str(s))
 
 def selectThenMouseDown(s, confidence, button):
-    target = select(s, confidence)
-    mouseDown(target[0],target[1],button=button)
+    try:
+        target = select(s, confidence)
+        print(target)
+        mouseDown(target[0],target[1],button=button)
+    except Exception as e:
+        print(e)
+        print("Could not find:"+str(s))
 
 def selectThenMouseUp(s, confidence, button):
-    target = select(s, confidence)
-    mouseUp(target[0],target[1],button=button)
+    try:
+        target = select(s, confidence)
+        mouseUp(target[0],target[1],button=button)
+    except:
+        print("Could not find:"+str(s))
 
 def selectThenPress(s, confidence, button):
-    target = select(s, confidence)
-    mouseTo(target[0], target[1])
-    press(button)
+    try:
+        target = select(s, confidence)
+        mouseTo(target[0], target[1])
+        press(button)
+    except:
+        print("Could not find:"+str(s))
 
 def checkFor(s, confidence):
-    return select(s, confidence, True) is not None
+    try:
+        return select(s, confidence, True) is not None
+    except:
+        return False
 
 commands = {
     "windows_mode": command(direct_input,1,[],[]),
@@ -121,8 +147,9 @@ commands = {
 }
 
 def commandTranslation(com, condition=None):
-    print(com[0])
     c = commands[com[0]]
+    print(com[0])
+    print(c)
     if c:
         c.sz = len(com)-1
         if len(com) >= 2:
@@ -142,7 +169,9 @@ def commandTranslation(com, condition=None):
     elif c.fn == commands["mouse_move"].fn:
         c.fn(int(c.args[0]),int(c.args[1]))
         print("Moving mouse at: "+str(c.args))
-    elif c.fn == commands["wait_for_this"].fn or c.fn == commands["find_and_left_click"].fn or c.fn == commands["find_and_right_click"].fn or c.fn == commands["find_and_middle_click"].fn or c.fn == commands["find_and_left_mouse_down"].fn or c.fn == commands["find_and_right_mouse_down"].fn or c.fn == commands["find_and_middle_mouse_down"].fn or c.fn == commands["find_and_left_mouse_up"].fn or c.fn == commands["find_and_right_mouse_up"].fn or c.fn == commands["find_and_middle_mouse_up"].fn:
+    elif c.fn == commands["find_and_left_click"].fn or c.fn == commands["find_and_right_click"].fn or c.fn == commands["find_and_middle_click"].fn or c.fn == commands["find_and_left_mouse_down"].fn or c.fn == commands["find_and_right_mouse_down"].fn or c.fn == commands["find_and_middle_mouse_down"].fn or c.fn == commands["find_and_left_mouse_up"].fn or c.fn == commands["find_and_right_mouse_up"].fn or c.fn == commands["find_and_middle_mouse_up"].fn:
+        print(c.args)
+        print(c.add)
         c.fn(os.path.join(path,c.args[0]),float(c.args[1]),c.add[0])
     elif c.fn == commands["find_and_press"].fn:
         c.fn(os.path.join(path,c.args[0]),float(c.args[1]),c.args[2])
@@ -151,6 +180,8 @@ def commandTranslation(com, condition=None):
         c.fn(float(c.args[0]))
     elif c.fn == commands["windows_mode"].fn:
         c.fn(c.args[0]=="1")
+    elif c.fn == commands["wait_for_this"].fn:
+        c.fn(os.path.join(path,c.args[0]),float(c.args[1]))
     elif c.fn == commands["check_for"].fn:
         if condition is not None:
             return c.fn(os.path.join(path,c.args[0]),float(c.args[1])) == condition
